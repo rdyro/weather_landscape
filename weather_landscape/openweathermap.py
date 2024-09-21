@@ -26,7 +26,8 @@ class WeatherInfo:
 
   FORECAST_PERIOD_HOURS = 3
 
-  def __init__(self, fdata):
+  def __init__(self, fdata: dict[str, Any], temperature_unit: str ="C"):
+    assert temperature_unit in ["C", "F"], "Only Celsius and Fahrenheit are supported"
     self.t = datetime.fromtimestamp(int(fdata["dt"]), tz=timezone.utc)
     self.id = int(fdata["weather"][0]["id"])
     self.clouds = fdata.get("clouds", {}).get("all", 0.0)
@@ -35,6 +36,8 @@ class WeatherInfo:
     self.windspeed = fdata.get("wind", {}).get("speed", 0.0)
     self.winddeg = fdata.get("wind", {}).get("deg", 0.0)
     self.temp = float(fdata["main"]["temp"]) - WeatherInfo.KTOC
+    if temperature_unit == "F":
+      self.temp = self.temp * 9 / 5 + 32
 
   def Print(self):
     print(f"{self.t} {self.id} {self.clouds:03d}% {self.rain:.2f} {self.snow:.2f} {self.temp:+.2f}"
@@ -47,7 +50,8 @@ class WeatherInfo:
 class OpenWeatherMap:
   OWMURL = "http://api.openweathermap.org/data/2.5/"
 
-  def __init__(self, apikey: str, latitude: float, longitude: float, cache: bool = True):
+  def __init__(self, apikey: str, latitude: float, longitude: float, cache: bool = True, 
+               temperature_unit: str = "C"):
     self.latitude, self.longitude = latitude, longitude
     reqstr = f"lat={latitude:.4f}&lon={longitude:.4f}&mode=json&APPID={apikey}"
     self.URL_FORECAST = self.OWMURL + "forecast?" + reqstr
@@ -58,6 +62,7 @@ class OpenWeatherMap:
                                    compression=zipfile.ZIP_DEFLATED)
     else:
       self.cache = None
+    self.temperature_unit = temperature_unit
     self._get_data()
 
   def _get_data(self):
@@ -90,14 +95,14 @@ class OpenWeatherMap:
     self.f.clear()
     self.timezone_offset_sec = data_curr.get("timezone", None)
     cdata = data_curr
-    f = WeatherInfo(cdata)
+    f = WeatherInfo(cdata, self.temperature_unit)
     self.f.append(f)
     if "list" not in data_forecast:
       return False
     for fdata in data_forecast["list"]:
       if not WeatherInfo.Check(fdata):
         continue
-      self.f.append(WeatherInfo(fdata))
+      self.f.append(WeatherInfo(fdata, self.temperature_unit))
     return True
 
   def get_current(self) -> WeatherInfo | None:

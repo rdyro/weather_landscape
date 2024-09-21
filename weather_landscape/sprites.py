@@ -53,23 +53,24 @@ class Sprites:
   DIGITMINUS = 11
   DIGITSEMICOLON = 12
 
-  def DrawInt(self, n, xpos, ypos, issign=True, isleadzero=False):
-    if n < 0:
-      sign = self.DIGITMINUS
-    else:
-      sign = self.DIGITPLAS
-    n = round(n)
-    n = abs(n)
-    n1 = n / 10
-    n2 = n % 10
+  def DrawInt(self, n, xpos, ypos, issigned=True, isleadzero=False):
+    sign = self.DIGITMINUS if n < 0 else self.DIGITPLAS
+    n = abs(round(n))
+    digits = []
+    while n > 0:
+      digits.append(n % 10)
+      n = n // 10
     dx = 0
-    if issign:
+    if issigned:
       w = self.Draw("digit", sign, xpos + dx, ypos)
       dx += w + 1
-    if (n1 != 0) or (isleadzero):
-      w = self.Draw("digit", n1, xpos + dx, ypos)
+    already_drew = False
+    for n in reversed(digits):
+      if n == 0 and not already_drew and not isleadzero:
+        continue
+      w = self.Draw("digit", n, xpos + dx, ypos)
+      already_drew = True
       dx += w + 1
-    w = self.Draw("digit", n2, xpos + dx, ypos)
     dx += w + 1
     return dx
 

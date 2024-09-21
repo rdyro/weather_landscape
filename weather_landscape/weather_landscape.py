@@ -13,14 +13,17 @@ class WeatherLandscape:
   SPRITES_DIR = Path(__file__).parent /  "sprite"
   DRAWOFFSET = 14  # for font size 10 under the temperature line
 
-  def __init__(self, lat: float, lon: float, width=512, height=128):
+  def __init__(self, lat: float, lon: float, width=512, height=128, temperature_unit="C"):
+    assert temperature_unit in ["C", "F"], "Only Celsius and Fahrenheit are supported"
     assert self.OWM_KEY != None, ("Set OWM_KEY variable to your OpenWeather API" 
                                   "key")
     self.width, self.height = width, height
     self.lat, self.long = lat, lon
+    self.temperature_unit = temperature_unit
 
   def make_img(self) -> Image.Image:
-    owm = OpenWeatherMap(self.OWM_KEY, latitude=self.lat, longitude=self.long)
+    owm = OpenWeatherMap(self.OWM_KEY, latitude=self.lat, longitude=self.long, 
+                         temperature_unit=self.temperature_unit)
     img = Image.new("1", (self.width, self.height), 1) # 1-bit pixels, black and white, white background
     spr = Sprites(self.SPRITES_DIR, img)
     art = DrawWeather(img, spr)

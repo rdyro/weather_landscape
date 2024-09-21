@@ -42,19 +42,6 @@ def get_suntimes(t: datetime, lat: float, lon: float, how_many_days: int = 5
 #get_sunrise = lambda t, lat, lon: _get_time_after(Sun(lat, lon).get_sunrise_time, t)
 #get_sunset = lambda t, lat, lon: _get_time_after(Sun(lat, lon).get_sunset_time, t)
 
-def _is_stationary_point(f_prev2: WeatherInfo | None, f_prev: WeatherInfo | None, 
-                         f: WeatherInfo | None) -> bool:
-  if f_prev2 is None or f_prev is None or f is None:
-    return False
-  elif f_prev.temp >= f_prev2.temp and f_prev.temp >= f.temp:
-    print(f"Maximum!")
-    return True
-  elif f_prev.temp <= f_prev2.temp and f_prev.temp <= f.temp:
-    print(f"Minimum!")
-    return True
-  else:
-    return False
-
 class DrawWeather:
   XSTART = 32
   XSTEP = 44
