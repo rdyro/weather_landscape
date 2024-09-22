@@ -1,7 +1,7 @@
 # Minimalistic copy of `lds133`'s Weather Landscape
 
 <p align="center">
-<img src="media/warsaw_weather_landscape.png" style="width:50%;max-width:512px">
+<img src="media/warsaw_weather_landscape.png" style="width:100%;max-width:512px">
 </p>
 
 Visualizing Weather Forecasts Through Landscape Imagery 
