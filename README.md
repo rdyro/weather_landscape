@@ -52,11 +52,11 @@ for example
 |----------|------------|
 |![example](media/sun_00.png)| Sunrise | 
 |![example](media/moon_00.png)| Sunset |
-|![example](media/cloud_30.png)| Cloud cover |
+|![example](media/cloud_02.png)![example](media/cloud_03.png)![example](media/cloud_05.png)![example](media/cloud_10.png)![example](media/cloud_30.png)![example](media/cloud_50.png)| Cloud cover |
 |![example](media/house_00.png)| Current time position|
 |![example](media/flower_00.png)| Midnight |
 |![example](media/flower_01.png)| Midday |
-|![example](media/palm_03.png)| South wind |
-|![example](media/east_03.png)| East wind |
-|![example](media/tree_03.png)| West wind |
-|![example](media/pine_02.png)| North wind |
+|![example](media/palm_00.png)![example](media/palm_01.png)![example](media/palm_02.png)![example](media/palm_03.png)| South wind |
+|![example](media/east_00.png)![example](media/east_01.png)![example](media/east_02.png)![example](media/east_03.png)| East wind |
+|![example](media/tree_00.png)![example](media/tree_01.png)![example](media/tree_02.png)![example](media/tree_03.png)| West wind |
+|![example](media/pine_00.png)![example](media/pine_01.png)![example](media/pine_02.png)![example](media/pine_03.png)| North wind |
