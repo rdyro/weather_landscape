@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import json
 from urllib.request import urlopen
 from datetime import datetime, timezone
@@ -47,6 +48,17 @@ class WeatherInfo:
   def Check(fdata):
     return ("dt" in fdata) and ("weather" in fdata) and ("main" in fdata)
 
+def _open_zipfile(cache_path):
+  compress = zipfile.ZIP_DEFLATED
+  try:
+    cache = zipfile.ZipFile(cache_path, mode="a", compression=compress)
+    assert cache.testzip() is None
+  except:
+    if cache_path.exists():
+      os.remove(cache_path)
+    cache = zipfile.ZipFile(cache_path, mode="a", compression=compress)
+  return cache
+
 class OpenWeatherMap:
   OWMURL = "http://api.openweathermap.org/data/2.5/"
 
@@ -58,10 +70,10 @@ class OpenWeatherMap:
     self.URL_CURR = self.OWMURL + "weather?" + reqstr
     self.f, self.timezone_offset_sec = [], None
     if cache:
-      self.cache = zipfile.ZipFile(Path(__file__).parent / "cache.zip", mode="a", 
-                                   compression=zipfile.ZIP_DEFLATED)
+      self.cache_path = Path(__file__).parent / "cache.zip"
+      self.cache = _open_zipfile(self.cache_path)
     else:
-      self.cache = None
+      self.cache_path, self.cache = None, None
     self.temperature_unit = temperature_unit
     self._get_data()
 
@@ -70,13 +82,14 @@ class OpenWeatherMap:
     if self.cache is not None:
       try:  # try to read from cache
         data = json.loads(self.cache.read(cache_key).decode("utf-8"))
-      except KeyError:
-        pass
+      except (KeyError, zipfile.BadZipFile):
+        self.cache = _open_zipfile(self.cache_path)
+
     if data.get("time", 0) < datetime.now(timezone.utc).timestamp() - 3600:
       current_data = json.loads(urlopen(self.URL_CURR).read())
       forecast_data = json.loads(urlopen(self.URL_FORECAST).read())
       data["time"] = datetime.now(timezone.utc).timestamp()
-      data["current"], data["forecast"]= current_data, forecast_data
+      data["current"], data["forecast"] = current_data, forecast_data
       if self.cache is not None:
         self.cache.writestr(cache_key, json.dumps(data)) 
       logger.log(logging.DEBUG, "Pulling new data")

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import tempfile
 from PIL import Image
@@ -30,7 +32,10 @@ class WeatherLandscape:
     art.Draw(self.DRAWOFFSET, owm)
     return img
 
-  def make_and_save_img(self) -> str:
-    img, tmp = self.make_img(), tempfile.NamedTemporaryFile(delete=False, suffix=".png")
-    img.save(tmp.name)
-    return tmp.name
+  def make_and_save_img(self, path: os.PathLike[str] | None = None) -> str:
+    if path is None:
+      path = tempfile.NamedTemporaryFile(delete=False, suffix=".png").name
+    path = Path(path).resolve()
+    img = self.make_img()
+    img.save(path)
+    return path

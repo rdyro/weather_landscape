@@ -180,12 +180,12 @@ class DrawWeather:
       else:
         tt = t_iter.astimezone(datetime.now().astimezone().tzinfo) # computer local time
       xx = xpos
-      round_hour = round(tt.hour + tt.minute / 60 + tt.second / 3600)
+      # tie-breaking sec
+      round_hour = round(tt.hour + tt.minute / 60 + (tt.second + 1) / 3600)
       while t_iter <= t1:
         ix = round(xx)
         if ix >= len(tline):
           break
-        # tie-breaking sec
         if round_hour == 12:
           self.sprite.Draw("flower", 1, ix, tline[ix])
         elif round_hour == 0:
